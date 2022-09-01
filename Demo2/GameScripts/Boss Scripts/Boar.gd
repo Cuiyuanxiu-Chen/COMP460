@@ -1,18 +1,23 @@
 extends KinematicBody2D
 
-const EnemyDeathEffect = preload("res://Effects/EnemyDeathEffect.tscn")
 
 var count = 0
 var timer = 0
 var stop_timer = 0
-# var rng = RandomNumberGenerator.new()
-var speed = 0
+var rng = RandomNumberGenerator.new()
+
+var speed = 40
 var direction = Vector2(0, 0)
 var temp_direction = Vector2(0, 0)
 var distance2hero = float("inf")
+
 var anim_sprite = null
 var player = null
 var should_stop = false
+var second_phase = false
+var stone_timer = 0
+var spike_timer = 0
+
 enum{
 	IDLE,
 	WALK,
@@ -24,6 +29,9 @@ var state = WALK
 var second_phase = true
 var stone_timer = 0
 
+onready var stoneSkill = get_node("fallingStone")
+onready var spikeSkill = get_node("EarthSpike")
+onready var screenSize = get_viewport().get_visible_rect().size
 onready var animationPlayer = $AnimationPlayer
 onready var animationTree = $AnimationTree
 onready var animationState = animationTree.get("parameters/playback")
@@ -36,16 +44,12 @@ func _ready():
 	player = get_parent().get_node("Player")
 
 func _physics_process(delta):
-	direction = player.position - self.position
+	if(is_instance_valid(player)):
+		direction = player.position - self.position
+		distance2hero = self.position.distance_to(player.position)
 	direction = direction.normalized()
-	distance2hero = self.position.distance_to(player.position)
+
 	var motion = direction * speed
-	#print("direction", direction)
-	# if(count == 0):
-	# 	direction.x = rng.randf_range(-2, 2)
-	# 	direction.y = rng.randf_range(-2, 2)
-	# 	count = 40
-	# count -= 1
 	animationTree.set("parameters/Walk/blend_position", direction)
 	animationTree.set("parameters/ChargePrep/blend_position", direction)
 	animationTree.set("parameters/Idle/blend_position", direction)
@@ -65,6 +69,7 @@ func _physics_process(delta):
 				animationState.travel("Walk")
 			else:
 				state = CHARGE_PREP
+				$PrepSound.play()
 		CHARGE_PREP:
 			motion = direction * 0
 			if timer < 100:
@@ -74,6 +79,7 @@ func _physics_process(delta):
 				temp_direction = direction
 				animationTree.set("parameters/Charge/blend_position", direction)
 				state = CHARGE
+				$ChargeSound.play()
 				timer = 0
 		CHARGE:
 			motion = temp_direction * speed * 6
@@ -93,12 +99,23 @@ func _physics_process(delta):
 				animationTree.set("parameters/Charge/blend_position", direction)
 				state = WALK
 				timer = 0
-	
+
 	if(second_phase):
-		if(stone_timer < 10):
+		if(stone_timer < 60):
 			stone_timer = stone_timer + 1
-		
-	
+		else:
+			var fall_position = Vector2(rng.randi_range(0,screenSize.x), rng.randi_range(100,screenSize.y))
+			stoneSkill.being_cast(fall_position)
+			stone_timer = 0
+			
+	if(spike_timer < 360):
+		spike_timer = spike_timer + 1
+	else:
+		if(state == WALK):
+			spikeSkill.being_cast()
+			state = IDLE
+			spike_timer = 0
+			
 	move_and_slide(motion)
 	move_and_collide(motion * delta)
 	
@@ -106,7 +123,9 @@ func _physics_process(delta):
 		
 
 func _process(delta):
-	distance2hero = self.position.distance_to(player.position)
+	if(is_instance_valid(player)):
+		distance2hero = self.position.distance_to(player.position)
+
 	
 #	AnimationProcess()
 #	if(count > 0):
@@ -139,24 +158,23 @@ func handle_charge_stop():
 	print("replay run")
 	count = 20
 
-
-
 func _on_Hurtbox_area_entered(area):
-	stats.health -= area.damage
-	print(stats.health)
-	print(area.get_parent().get_name() + " entered")
+	print(area.get_parent().get_name() + " entered boss")
 	if("WoodIdle" in area.get_parent().get_name()):
 		fix_position(false)
 	elif("WoodSkill" in area.get_parent().get_name()):
 		fix_position(true)
 	else:
-		take_damage()
-		hurtbox.create_hit_effect()
-	#print("hit boar area's parent: ", str(area.get_parent()))
-	#queue_free()
+		take_damage(area)
+	if stats.health < stats.max_health/2:
+		second_phase = true
 
-func take_damage():
-	pass
+
+func take_damage(area):
+	stats.health -= 53
+#	emit_signal("boss_damage")
+	animationPlayer.play("Hurt")
+
 
 func fix_position(check):
 	if(!check):
@@ -165,10 +183,10 @@ func fix_position(check):
 			state = STOP
 	else:
 		stop_timer = stop_timer - 90
-	
+		
+func get_stats():
+	return stats
+
 func _on_Stats_no_health():
+	PlayerStats.num_skills += 1
 	queue_free()
-	var enemyDeathEffect = EnemyDeathEffect.instance()
-	get_parent().add_child(enemyDeathEffect)
-	enemyDeathEffect.global_position = global_position
-	

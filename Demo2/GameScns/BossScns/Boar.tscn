@@ -1,16 +1,20 @@
-[gd_scene load_steps=89 format=2]
+[gd_scene load_steps=94 format=2]
 
-[ext_resource path="res://Art Src/BossArt/charge prep adjusted.png" type="Texture" id=1]
+[ext_resource path="res://Art Src/BossArt/Boar/charge prep adjusted.png" type="Texture" id=1]
 [ext_resource path="res://GameScripts/Boss Scripts/Boar.gd" type="Script" id=2]
-[ext_resource path="res://Art Src/BossArt/walking v2 adjusted.png" type="Texture" id=3]
+[ext_resource path="res://Art Src/BossArt/Boar/walking v2 adjusted.png" type="Texture" id=3]
 [ext_resource path="res://GameScns/Hitboxes&Hurtboxes/HurtBox.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Art Src/BossArt/ChargePrepRight.png" type="Texture" id=5]
-[ext_resource path="res://Art Src/BossArt/RunRight.png" type="Texture" id=6]
-[ext_resource path="res://Art Src/BossArt/charge adjusted.png" type="Texture" id=7]
+[ext_resource path="res://Art Src/BossArt/Boar/ChargePrepRight.png" type="Texture" id=5]
+[ext_resource path="res://Art Src/BossArt/Boar/RunRight.png" type="Texture" id=6]
+[ext_resource path="res://Art Src/BossArt/Boar/charge adjusted.png" type="Texture" id=7]
 [ext_resource path="res://scripts/BoarWalk.gd" type="Script" id=8]
-[ext_resource path="res://Art Src/BossArt/WalkRight.png" type="Texture" id=9]
+[ext_resource path="res://Art Src/BossArt/Boar/WalkRight.png" type="Texture" id=9]
 [ext_resource path="res://Stats.tscn" type="PackedScene" id=10]
 [ext_resource path="res://GameScns/Hitboxes&Hurtboxes/HitBox.tscn" type="PackedScene" id=11]
+[ext_resource path="res://GameScripts/Boss Scripts/fallingStone.gd" type="Script" id=12]
+[ext_resource path="res://GameScripts/Boss Scripts/EarthSpike.gd" type="Script" id=13]
+[ext_resource path="res://SoundEffects/boar_angry.wav" type="AudioStream" id=14]
+[ext_resource path="res://SoundEffects/boar1.wav" type="AudioStream" id=15]
 
 [sub_resource type="AtlasTexture" id=13]
 flags = 4
@@ -180,6 +184,18 @@ tracks/0/keys = {
 "update": 1,
 "values": [ 10, 11, 12, 13 ]
 }
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Hitbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
 
 [sub_resource type="Animation" id=53]
 resource_name = "ChargePrepLeft"
@@ -233,6 +249,34 @@ tracks/0/keys = {
 "update": 1,
 "values": [ 24, 25, 26, 27 ]
 }
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Hitbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[sub_resource type="Animation" id=105]
+resource_name = "Hurt"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/path = NodePath("../BoarAnimation:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.102931, 0.2 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 0, 0, 1 ), Color( 1, 1, 1, 1 ) ]
+}
 
 [sub_resource type="Animation" id=92]
 resource_name = "IdleLeft"
@@ -249,6 +293,18 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 1,
 "values": [ 8, 9, 8, 9 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Hitbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
 }
 
 [sub_resource type="Animation" id=96]
@@ -267,6 +323,18 @@ tracks/0/keys = {
 "update": 1,
 "values": [ 22, 23, 22, 23 ]
 }
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Hitbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
 
 [sub_resource type="Animation" id=56]
 length = 0.001
@@ -281,6 +349,18 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ 0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Hitbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ false ]
 }
 
 [sub_resource type="Animation" id=57]
@@ -300,6 +380,18 @@ tracks/0/keys = {
 "update": 1,
 "values": [ 0, 1, 2, 3 ]
 }
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Hitbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
 
 [sub_resource type="Animation" id=58]
 resource_name = "WalkRight"
@@ -317,6 +409,18 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 1,
 "values": [ 14, 15, 16, 17 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Hitbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
 }
 
 [sub_resource type="AnimationNodeAnimation" id=86]
@@ -475,11 +579,16 @@ states/Walk/node = SubResource( 61 )
 states/Walk/position = Vector2( 575, 100 )
 transitions = [ "Walk", "ChargePrep", SubResource( 82 ), "ChargePrep", "Walk", SubResource( 83 ), "ChargePrep", "Charge", SubResource( 84 ), "Charge", "ChargePrep", SubResource( 85 ), "Idle", "Walk", SubResource( 94 ), "Walk", "Idle", SubResource( 95 ) ]
 start_node = "Idle"
+graph_offset = Vector2( 315.366, 0 )
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id=66]
 
 [sub_resource type="RectangleShape2D" id=103]
-extents = Vector2( 30.75, 84.5 )
+extents = Vector2( 49.3751, 81.2499 )
+
+[sub_resource type="CapsuleShape2D" id=104]
+radius = 53.0
+height = 66.0
 
 [sub_resource type="CapsuleShape2D" id=104]
 radius = 34.0
@@ -487,6 +596,7 @@ height = 70.0
 
 [node name="Boar" type="KinematicBody2D"]
 position = Vector2( 1, 0 )
+z_as_relative = false
 collision_layer = 8
 collision_mask = 499
 script = ExtResource( 2 )
@@ -510,6 +620,7 @@ anims/ChargeLeft = SubResource( 52 )
 anims/ChargePrepLeft = SubResource( 53 )
 anims/ChargePrepRight = SubResource( 54 )
 anims/ChargeRight = SubResource( 55 )
+anims/Hurt = SubResource( 105 )
 anims/IdleLeft = SubResource( 92 )
 anims/IdleRight = SubResource( 96 )
 anims/RESET = SubResource( 56 )
@@ -528,11 +639,9 @@ parameters/Walk/blend_position = Vector2( -0.32797, 0.0172414 )
 
 [node name="Hurtbox" parent="." instance=ExtResource( 4 )]
 position = Vector2( 150, 110 )
-collision_layer = 8
-collision_mask = 498
 
 [node name="CollisionShape2D" parent="Hurtbox" index="0"]
-position = Vector2( -155, -79 )
+position = Vector2( -152, -73 )
 rotation = 1.5708
 shape = SubResource( 103 )
 
@@ -541,13 +650,31 @@ max_health = 1000
 
 [node name="Hitbox" parent="." instance=ExtResource( 11 )]
 collision_layer = 1024
-collision_mask = 4
+collision_mask = 0
 
 [node name="CollisionShape2D" parent="Hitbox" index="0"]
-position = Vector2( -47, 36 )
+position = Vector2( -8, 44 )
+rotation = 1.5708
 shape = SubResource( 104 )
 
+[node name="fallingStone" type="KinematicBody2D" parent="."]
+collision_layer = 1024
+collision_mask = 0
+script = ExtResource( 12 )
+
+[node name="EarthSpike" type="KinematicBody2D" parent="."]
+script = ExtResource( 13 )
+
+[node name="Enemy" type="Node2D" parent="."]
+
+[node name="PrepSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 15 )
+
+[node name="ChargeSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 14 )
+
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_Hurtbox_area_entered"]
+[connection signal="no_health" from="Stats" to="." method="_on_Stats_no_health"]
 
 [editable path="Hurtbox"]
 [editable path="Hitbox"]
