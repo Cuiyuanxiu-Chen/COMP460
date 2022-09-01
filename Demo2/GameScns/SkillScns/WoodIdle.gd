@@ -1,13 +1,6 @@
 extends Node2D
 
-
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
-
-
-onready var water = get_node("WaterSkill")
+#onready var water = get_node("WaterSkill")
 onready var animatedSprite = $AnimatedSprite
 onready var animationPlayer = $woodAnimation
 var animationFinished = false
@@ -15,8 +8,13 @@ var animationFinished = false
 func _ready():
 	animationPlayer.play("SmallVine")
 	
+	
 func _on_grow_finished():
 	animationFinished = true
+	var SceneName = get_tree().current_scene.get_name()
+	if(SceneName == "World2"):
+		print("burned woodidle")
+		animationPlayer.play("Burned")
 	
 func _on_animation_finished():
 	queue_free()

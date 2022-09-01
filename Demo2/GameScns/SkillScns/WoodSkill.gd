@@ -15,4 +15,10 @@ func upgrade():
 
 func _on_animation_finished():
 	queue_free()
+
+func _on_Hurtbox_area_entered(area):
+	var SceneName = get_tree().current_scene.get_name()
+	if(SceneName == "World2"):
+		print("------- wood skill ", area.get_parent().get_name())
+		growPlayer.play("burned")
 	

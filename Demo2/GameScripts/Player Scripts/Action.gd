@@ -1,10 +1,6 @@
 extends KinematicBody2D
 
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
 # Useless constants
 const MAX_SPEED = 80
 const ACCELERATION = 500
@@ -19,12 +15,11 @@ var state = MOVE
 
 var speed = 100
 var velocity = Vector2(0,0)
-#var face_right = true
 var animation_in_process = false
 var animation_not_interruptable = false
-var wood_cd = 0
-var water_cd = 0
 var stats = PlayerStats
+var enemy
+var invincibleCounter = 0
 
 onready var animationPlayer = $AnimationPlayer
 onready var animationTree = $AnimationTree
@@ -32,19 +27,28 @@ onready var animationState = animationTree.get("parameters/playback")
 onready var swordHitbox = $HitboxPivot/SwordHitbox
 onready var hurtbox = $Hurtbox
 
+signal cast_wood
+signal cast_water
+signal cast_earth
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	print ("Hello World")
+	# Connect signals
 	stats.connect("no_health", self, "queue_free")
+	self.connect("cast_wood", stats, "_on_wood_cast")
+	self.connect("cast_water", stats, "_on_water_cast")
+	self.connect("cast_earth", stats, "_on_earth_cast")
+	
 	animationTree.active = true
-
-func _process(delta):
-	if(wood_cd > 0):
-		wood_cd -= 1
-		#print("wood_cd:", wood_cd)
-	if(water_cd > 0):
-		water_cd -= 1
-		#print("water_cd:", water_cd)
+	var SceneName = get_tree().current_scene.get_name()
+	if(SceneName == "World1"):
+		enemy = $"../Boar"
+	elif (SceneName == "Tutorial"):
+		enemy = $"../Dummy"
+	elif(SceneName == "World2"):
+		enemy = $"../ZhuRong"
 
 func AnimationLoop():
 	var face_direction = "E"
@@ -53,16 +57,21 @@ func AnimationLoop():
 	
 	# pass # Replace with function body.
 func _physics_process(delta):
+	if (invincibleCounter > 0):
+		invincibleCounter -= 1
 	match state:
 		MOVE:
 			move_state(delta)
 		DASH:
-			pass
+			dash_state(delta)
 		ATTACK:
 			attack_state(delta)
 	
-	# if(Input.get_action_strength("ui_right")):
-	# 	print("pressed d")
+####################################################
+####################################################
+##
+# States functions
+#
 func move_state(delta):
 	
 	var input_vector = Vector2.ZERO
@@ -77,6 +86,7 @@ func move_state(delta):
 		animationTree.set("parameters/Idle/blend_position", input_vector)
 		animationTree.set("parameters/Walk/blend_position", input_vector)
 		animationTree.set("parameters/Attack/blend_position", input_vector)
+		animationTree.set("parameters/Dash/blend_position", input_vector)
 		animationState.travel("Walk")
 	else:
 		animationState.travel("Idle")
@@ -90,46 +100,50 @@ func move_state(delta):
 	# Immediately change stop walking and commit to attack
 	if (Input.is_action_just_pressed("ui_attack")):
 		state = ATTACK
+		$AttackSound.play()
+	if (Input.is_action_just_pressed("ui_dash")):
+		state = DASH
 
 func attack_state(delta):
 	animationState.travel("Attack")
 	
+	
+func dash_state(delta):
+	animationState.travel("Dash")
+	move_and_slide(velocity * 3)
+	move_and_collide(velocity * 3  *delta)
+	
 func attack_animation_finished():
 	state = MOVE
 
+####################################################
+####################################################
+
 func _input(ev):
-	
-	var player = get_node("player")
+#	var player = get_node("player")
 	var woodskill = get_node("WoodSkill")
 	var waterskill = get_node("WaterSkill")
+	var earthskill = get_node("EarthSkill")
 	
-	
-#	if Input.is_action_pressed("ui_right", false):
-#		face_right = true;
-#		animationPlayer.play("WalkRight")	
-#	elif Input.is_action_pressed("ui_left", false):
-#		face_right = false;
-#		animationPlayer.play("WalkRight")	
-	#if Input.is_mouse_button_pressed(BUTTON_LEFT):
-		#animationPlayer.play("Attack")	
-	if Input.is_key_pressed(KEY_U):
-		if(wood_cd == 0):
-			woodskill.being_cast()
-			wood_cd = 60
+	if Input.is_key_pressed(KEY_K):
+		if(stats.wood_cd == 0):
+			$WoodSound.play()
+			woodskill.being_cast(enemy)
+			emit_signal("cast_wood")
 		
-	if Input.is_key_pressed(KEY_I):
-		if(water_cd == 0):
+	if Input.is_key_pressed(KEY_L):
+		if(stats.water_cd == 0):
+			$WaterSound.play()
 			waterskill.being_cast()
-			water_cd = 60
-	#else:
-	#	animationPlayer.play("Idle")	
-		
-	#if face_right == true:
-	#	player.set_flip_h(false)
-	#else:
-	#	player.set_flip_h(true)
+			emit_signal("cast_water")
+			
+	if Input.is_key_pressed(KEY_O):
+		if(stats.earth_cd == 0 && stats.num_skills > 2):
+			earthskill.being_cast()
+			emit_signal("cast_earth")
 
-			#play attck animation
+####################################################
+####################################################
 
 func get_player2enemy_dir():
 	var enemy = $"../Boar"
@@ -137,21 +151,27 @@ func get_player2enemy_dir():
 	dir_vec = dir_vec.normalized()
 	return dir_vec
 
-
-# func _movementLoop(delta):
-# 	move_direction.x = int(Input.is_action_pressed("ui_right")) - int(Input.is_action_pressed("ui_left"))
-# 	move_direction.y = (int(Input.is_action_pressed("ui_down")) - int(Input.is_action_pressed("ui_up"))) / float(2)
-	
-# 	var motion = move_direction.normalized() * speed
-# 	move_and_slide(motion)
-
-# func _animationLoop():
-# 	pass
-
-
+func take_damage(area):
+	invincibleCounter = 20
+	# Hard Code, TODO: CHANGEEEEEEa
+	var SceneName = get_tree().current_scene.get_name()
+	if(SceneName == "World2"):
+		stats.health -= 8 * stats.dec_dmg
+	else:
+		stats.health -= 10 * stats.dec_dmg
+	print("===== what hurt player ========")
+	print(area.get_parent().get_name())
+	animationPlayer.play("Hurt")
 
 func _on_Hurtbox_area_entered(area):
-	stats.health -= 10
-	hurtbox.start_invincibility(0.5)
-	hurtbox.create_hit_effect()
-	print("player health ", stats.health)
+	if(state != DASH && invincibleCounter == 0):
+		self.take_damage(area)
+#	hurtbox.create_hit_effect()
+#	if get_tree().current_scene.get_name() == "World2":
+#		var Flame = load("res://GameScns/BossScns/OnFire.tscn")
+#		var flame = Flame.instance()
+#		var player = get_tree().current_scene.get_node("Player")
+#		player.add_child(flame)
+#	print("state: ", state)
+#	print("invincibleCounter:", invincibleCounter)
+	print("player health: ", stats.health)

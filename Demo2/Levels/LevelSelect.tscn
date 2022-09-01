@@ -1,0 +1,148 @@
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://Art Src/GUIArt/pixil-frame-0 (1).png" type="Texture" id=1]
+[ext_resource path="res://Art Src/splash_updated.png" type="Texture" id=2]
+[ext_resource path="res://LevelScripts/LevelSelect/DummyBtn.gd" type="Script" id=3]
+[ext_resource path="res://Art Src/GUIArt/dummy_icon.png" type="Texture" id=4]
+[ext_resource path="res://Art Src/GUIArt/warhog_icon.png" type="Texture" id=5]
+[ext_resource path="res://LevelScripts/LevelSelect/BoarButton.gd" type="Script" id=6]
+[ext_resource path="res://Art Src/GUIArt/output-onlinepngtools.png" type="Texture" id=7]
+[ext_resource path="res://GameScns/UIScns/DeathUI/MainTxtBtn.gd" type="Script" id=8]
+[ext_resource path="res://Fonts/PolandCannedIntoFuture-OxE3.ttf" type="DynamicFontData" id=9]
+[ext_resource path="res://Art Src/GUIArt/map.png" type="Texture" id=10]
+[ext_resource path="res://Fonts/Perfect DOS VGA 437.ttf" type="DynamicFontData" id=11]
+[ext_resource path="res://Art Src/BossArt/ZhuRong/ZhuRong_icon.png" type="Texture" id=12]
+[ext_resource path="res://LevelScripts/LevelSelect/ZhuRongButton.gd" type="Script" id=13]
+
+[sub_resource type="DynamicFont" id=1]
+size = 26
+font_data = ExtResource( 9 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 21
+font_data = ExtResource( 11 )
+
+[node name="LevelSelect" type="Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MenuBg" type="TextureRect" parent="."]
+margin_left = -512.0
+margin_top = -300.0
+margin_right = 513.0
+margin_bottom = 299.0
+rect_scale = Vector2( 0.998977, 1.00093 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Map" type="TextureRect" parent="."]
+margin_left = -505.0
+margin_top = -287.0
+margin_right = 519.0
+margin_bottom = 289.0
+texture = ExtResource( 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -517.0
+margin_top = -335.0
+margin_right = 83.0
+margin_bottom = 65.0
+rect_scale = Vector2( 1.72662, 1.71016 )
+texture = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DummyButton" type="TextureButton" parent="."]
+margin_left = -308.0
+margin_top = 106.0
+margin_right = -244.0
+margin_bottom = 162.0
+rect_pivot_offset = Vector2( -141, 16 )
+texture_normal = ExtResource( 4 )
+expand = true
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BoarButton" type="TextureButton" parent="."]
+margin_left = -64.0
+margin_top = 88.0
+margin_right = 18.0
+margin_bottom = 157.0
+texture_normal = ExtResource( 5 )
+expand = true
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MainTxtBtn" type="TextureButton" parent="."]
+margin_left = 362.0
+margin_top = 240.0
+margin_right = 1187.0
+margin_bottom = 326.0
+rect_scale = Vector2( 0.306842, 0.594202 )
+texture_normal = ExtResource( 7 )
+script = ExtResource( 8 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_left = 403.0
+margin_top = 251.0
+margin_right = 455.0
+margin_bottom = 278.0
+custom_fonts/font = SubResource( 1 )
+text = "Back"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="."]
+margin_left = -361.0
+margin_top = -154.0
+margin_right = -28.0
+margin_bottom = -45.0
+custom_colors/font_color = Color( 0.709804, 0.482353, 0.156863, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Click on the boss icons
+to start playing!"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ZhuRongButton" type="TextureButton" parent="."]
+margin_left = 309.0
+margin_top = 91.0
+margin_right = 385.0
+margin_bottom = 162.0
+texture_normal = ExtResource( 12 )
+expand = true
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="button_up" from="DummyButton" to="DummyButton" method="_on_TextureButton_up"]
+[connection signal="button_up" from="BoarButton" to="BoarButton" method="_on_BoarButton_up"]
+[connection signal="button_up" from="MainTxtBtn" to="MainTxtBtn" method="_on_MainTxtBtn_button_up"]
+[connection signal="button_up" from="ZhuRongButton" to="ZhuRongButton" method="_on_ZhuRongButton_up"]

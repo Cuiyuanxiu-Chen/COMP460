@@ -1,36 +1,67 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://HealthUI.gd" type="Script" id=1]
-[ext_resource path="res://MomcakeBold-WyonA.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://Art Src/GUIArt/PlayerUI/player HP Bar split3.png" type="Texture" id=1]
+[ext_resource path="res://HealthUI.gd" type="Script" id=2]
+[ext_resource path="res://Art Src/GUIArt/PlayerUI/player HP Bar split1.png" type="Texture" id=3]
+[ext_resource path="res://Art Src/GUIArt/PlayerUI/label_HP.png" type="Texture" id=4]
+[ext_resource path="res://Art Src/GUIArt/PlayerUI/player HP Bar split2.png" type="Texture" id=5]
 
-[sub_resource type="DynamicFont" id=1]
-size = 30
-font_data = ExtResource( 2 )
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.298039, 0.733333, 0, 1 )
+border_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.243137, 0.164706, 0.164706, 1 )
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color( 0, 0, 0, 1 )
+border_blend = true
 
 [node name="HealthUI" type="Control"]
-anchor_top = -0.159
-anchor_bottom = -0.159
-margin_left = -1.0
-margin_top = 55.4
-margin_right = 209.0
-margin_bottom = 123.4
-script = ExtResource( 1 )
+margin_left = 1.0
+margin_top = 2.0
+margin_right = 356.0
+margin_bottom = 72.0
+rect_scale = Vector2( 0.825983, 0.756149 )
+script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="."]
-anchor_top = -1.369
-anchor_bottom = -1.369
-margin_left = 17.0
-margin_top = 103.092
-margin_right = 195.0
-margin_bottom = 147.092
-size_flags_vertical = 5
-custom_fonts/font = SubResource( 1 )
-text = "HP = 100"
-align = 1
-valign = 1
+[node name="TextureProgress" type="TextureProgress" parent="."]
+margin_left = 21.7922
+margin_top = -25.1273
+margin_right = 453.792
+margin_bottom = 118.873
+value = 50.0
+texture_under = ExtResource( 3 )
+texture_progress = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Sprite" type="Sprite" parent="TextureProgress"]
+position = Vector2( 164.652, 67.447 )
+texture = ExtResource( 5 )
+
+[node name="UpdateTween" type="Tween" parent="."]
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+visible = false
+margin_left = 46.0
+margin_top = 29.0
+margin_right = 354.0
+margin_bottom = 55.0
+custom_styles/fg = SubResource( 2 )
+custom_styles/bg = SubResource( 3 )
+value = 50.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HP" type="Sprite" parent="ProgressBar"]
+position = Vector2( -25, 11 )
+scale = Vector2( 0.928571, 0.875 )
+texture = ExtResource( 4 )
